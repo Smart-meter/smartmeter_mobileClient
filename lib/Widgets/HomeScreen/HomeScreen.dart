@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smartmeter/Meter.dart';
+import 'package:smartmeter/Widgets/HomeScreen/Meter.dart';
 import 'package:smartmeter/Widgets/HomeScreen/Greet.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child:
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Greet(),

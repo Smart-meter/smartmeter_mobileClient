@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:smartmeter/Widgets/HomeScreen/HomeScreen.dart';
+import 'package:smartmeter/Widgets/Navigation/Settings/Settings.dart';
 
 import 'History/History.dart';
-import 'Settings/Settings.dart';
+
+
 
 class Navigation extends StatefulWidget {
   const Navigation({super.key});
@@ -46,10 +48,10 @@ class _NavigationBarState extends State<Navigation> {
           ),
           NavigationDestination(
             icon: Icon(
-              Icons.history,
+              Icons.camera_alt,
               color: Colors.white,
             ),
-            label: 'History',
+            label: 'Camera',
           ),
           NavigationDestination(
             icon: Icon(

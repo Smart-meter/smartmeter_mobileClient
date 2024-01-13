@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartmeter/Widgets/Auth/Login.dart';
 
-import '../Navigation.dart';
+import '../Navigation/Navigation.dart';
 
 class Auth extends StatefulWidget {
   const Auth({super.key});
