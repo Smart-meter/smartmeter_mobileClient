@@ -1,9 +1,9 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:smartmeter/Widgets/HomeScreen/HomeScreen.dart';
 import 'package:smartmeter/Widgets/Navigation/Settings/Settings.dart';
 
-import 'History/History.dart';
-
+import 'Camera/Camera.dart';
 
 
 class Navigation extends StatefulWidget {
@@ -16,9 +16,10 @@ class Navigation extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<Navigation> {
-   int currentPage = 0;
+  int currentPage = 0;
 
-  //Widget currentPage= const Home();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +31,8 @@ class _NavigationBarState extends State<Navigation> {
         onDestinationSelected: (int index) {
           setState(() {
             currentPage = index;
-            });
-          },
+          });
+        },
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         selectedIndex: currentPage,
         destinations: const <Widget>[
@@ -64,7 +65,9 @@ class _NavigationBarState extends State<Navigation> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 16),
-        child: currentPage ==0 ? const HomeScreen() : currentPage==1 ? const History() : Settings(),
+        child: currentPage == 0 ? const HomeScreen() : currentPage == 1
+            ? const Camera()
+            : const Settings(),
       ),
       backgroundColor: Colors.black,
     );

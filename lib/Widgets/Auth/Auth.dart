@@ -18,7 +18,7 @@ class _AuthState extends State<Auth> {
 
   //todo
   /// this value must be precomputed depending on the user auth status
-  bool _isAuthenticated =false;
+  bool _isAuthenticated =true;
  void authStatus(bool status){
    setState(() {
      _isAuthenticated = status;
