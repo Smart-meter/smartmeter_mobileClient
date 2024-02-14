@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smartmeter/Widgets/Auth/Signup.dart';
+import 'package:smartmeter/helpers/auth_helpers.dart';
 
 class Login extends StatefulWidget {
   Login({super.key, required this.isAuthenticated});
@@ -25,28 +26,35 @@ class _LoginState extends State<Login> {
         _passwordController.clear();
       });
 
-      /// show error
-      ScaffoldMessenger.of(context).clearSnackBars();
-
-      /// showing snack bar
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Email and password are required!"),
-          duration: Duration(seconds: 5),
-        ),
-      );
+      showSnackBar("Email and password are required!");
       return;
     } else {
       _authenticate();
     }
   }
 
-  void _authenticate() {
+  void showSnackBar(String text) {
+    /// show error
+    ScaffoldMessenger.of(context).clearSnackBars();
+    /// showing snack bar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        duration: const Duration(seconds: 5),
+      ),
+    );
+  }
+
+  _authenticate() async {
     /// if authentication is sucessful perform a setState and change
     /// _isAuthenticated to true, and also store the key and credentials in local memory
     ///
     //todo implement api calling functionality
-    widget.isAuthenticated(true);
+
+    bool val = await AuthHelper.loginHelper(
+        _emailController.text.trim(), _passwordController.text.trim());
+
+    widget.isAuthenticated(val);
   }
 
   @override
@@ -55,18 +63,17 @@ class _LoginState extends State<Login> {
     _passwordController.dispose();
     super.dispose();
   }
+
   bool isSignup = false;
 
   void showSignUp(bool flag) {
-
     setState(() {
       isSignup = flag;
     });
   }
+
   @override
   Widget build(BuildContext context) {
-
-
     Widget loginWidget = Center(
       child: SingleChildScrollView(
         child: Column(
@@ -100,8 +107,8 @@ class _LoginState extends State<Login> {
                   labelText: 'Email',
                   hintText: 'enter your email',
                   helperText: 'Enter your email',
-                  border:
-                      OutlineInputBorder(borderRadius: BorderRadius.circular(16))),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16))),
             ),
             const SizedBox(
               height: 32,
@@ -118,8 +125,8 @@ class _LoginState extends State<Login> {
                   labelText: 'Password',
                   hintText: 'enter your email',
                   helperText: 'Enter your password',
-                  border:
-                      OutlineInputBorder(borderRadius: BorderRadius.circular(16))),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16))),
             ),
             const SizedBox(
               height: 32,
@@ -146,7 +153,7 @@ class _LoginState extends State<Login> {
               children: [
                 const Text("Don't have an account? "),
                 TextButton(
-                    onPressed: ()=>showSignUp(true),
+                    onPressed: () => showSignUp(true),
                     child: const Text("Sign Up"))
               ],
             )
@@ -155,10 +162,11 @@ class _LoginState extends State<Login> {
       ),
     );
 
-    Widget signUpWidget =
-        SingleChildScrollView(child: Signup(showSignup: showSignUp, isAuthenticated: widget.isAuthenticated));
+    Widget signUpWidget = SingleChildScrollView(
+        child: Signup(
+            showSignup: showSignUp, isAuthenticated: widget.isAuthenticated));
     return Padding(
         padding: const EdgeInsets.all(16),
-        child: isSignup?signUpWidget:loginWidget);
+        child: isSignup ? signUpWidget : loginWidget);
   }
 }

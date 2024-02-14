@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
             backgroundColor: kColorScheme.primary,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         ),
 
@@ -31,7 +31,10 @@ class MyApp extends StatelessWidget {
       ),
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home: const Auth(),
+      home: Auth(),
     );
   }
 }
+
+
+
