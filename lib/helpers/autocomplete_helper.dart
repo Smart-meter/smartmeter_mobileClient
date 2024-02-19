@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import 'config.dart';
+import '../config.dart';
 
 class AutoCompleteHelper {
-  static Future<List<String>> addressHelper(String prompt) async {
+  static Future<List<Map<String,String>>> addressHelper(String prompt) async {
     Map<String,String> query={};
     query['text'] = prompt;
     query['apiKey'] = Config.apiKey;
@@ -15,7 +15,7 @@ class AutoCompleteHelper {
 
     final url = Uri.http(Config.addressAPI,Config.tail,query);
 
-    List<String> results = [];
+    List<Map<String,String>> results = [];
 
     try {
       final response = await http.get(
@@ -27,9 +27,14 @@ class AutoCompleteHelper {
         dynamic json = jsonDecode(response.body);
 
         for(dynamic data in json['results']){
+          Map<String, String> temp={};
 
-          print(data['formatted']);
-          results.add(data['formatted']);
+          temp['address'] = data['formatted'];
+          temp['city'] = data["city"];
+          temp['zipCode'] = data["postcode"];
+          temp['state'] = data["state"];
+
+          results.add(temp);
         }
 
         return results;

@@ -1,7 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartmeter/Widgets/HomeScreen/HomeScreen.dart';
 import 'package:smartmeter/Widgets/Navigation/Settings/Settings.dart';
+import 'package:smartmeter/helpers/user_details_helper.dart';
 
 import 'Camera/Camera.dart';
 
@@ -18,8 +20,28 @@ class Navigation extends StatefulWidget {
 class _NavigationBarState extends State<Navigation> {
   int currentPage = 0;
 
+// here i make api call to fetch user details using the token
+// i only make this once, so i check before i make the call
+
+  void asyncStuff() async{
+    final prefs = await SharedPreferences.getInstance();
+
+    // userDetails is the prefs key i choosed
+
+    if(!prefs.containsKey("userDetails")){
+      // make an api call and update the prefs.
+
+      await UserDetailsHelper.fetchUserDetails();
+    }
 
 
+  }
+
+
+  @override
+  void initState() {
+    asyncStuff();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -164,7 +164,7 @@ class _LoginState extends State<Login> {
 
     Widget signUpWidget = SingleChildScrollView(
         child: Signup(
-            showSignup: showSignUp, isAuthenticated: widget.isAuthenticated));
+            showSignup: showSignUp, map: {"email":"", "firstName":"","lastName":"","password":""},));
     return Padding(
         padding: const EdgeInsets.all(16),
         child: isSignup ? signUpWidget : loginWidget);

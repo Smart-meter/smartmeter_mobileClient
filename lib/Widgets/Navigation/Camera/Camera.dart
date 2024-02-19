@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:smartmeter/helpers/image_upload_helper.dart';
 import 'package:smartmeter/main.dart';
 
 import '../../TakePictureScreen.dart';
@@ -39,13 +40,13 @@ class _CameraState extends State<Camera> {
   Widget build(BuildContext context) {
 
     return selectedImage == null
-        ? const CircularProgressIndicator()
+        ? const Center(child: CircularProgressIndicator())
         : Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Camera",
+              const Text("Upload Image",
                   style: TextStyle(
                       color: Colors.blueAccent,
                       fontSize: 32,
@@ -64,7 +65,9 @@ class _CameraState extends State<Camera> {
                     style: ElevatedButton.styleFrom(backgroundColor: kColorScheme.error),
                     child: const Text("Clear"),
                   ),
-                  ElevatedButton(onPressed: () {}, child: const Text("Upload!"))
+                  ElevatedButton(onPressed: () {
+                   ImageUploadHelper.uploadImage(selectedImage!);
+                  }, child: const Text("Upload!"))
                 ],
               )
             ],

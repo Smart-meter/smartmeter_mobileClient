@@ -7,12 +7,9 @@ import '../Navigation/Navigation.dart';
 class Auth extends StatefulWidget {
    Auth({super.key});
 
+
+
   bool authStatus = false;
-
-
-
-
-
 
   @override
   State<StatefulWidget> createState()  {
@@ -45,7 +42,12 @@ class _AuthState extends State<Auth> {
   void asyncStuff() async{
     final prefs = await SharedPreferences.getInstance();
 
-    _isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
+    setState(() {
+      _isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
+    });
+
+
+    print(_isAuthenticated);
   }
 
   @override
