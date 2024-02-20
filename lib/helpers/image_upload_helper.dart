@@ -9,12 +9,11 @@ import 'package:http/http.dart' as http;
 import '../config.dart';
 
 class ImageUploadHelper{
-  static Future<void> uploadImage(File image)async {
+  static Future<bool> uploadImage(File image)async {
 
     final prefs = await SharedPreferences.getInstance();
 
     Uint8List bytes = image.readAsBytesSync();
-    print(bytes);
 
     String fileName = image.path.split("/").last;
 
@@ -23,27 +22,24 @@ class ImageUploadHelper{
     final httpImage = http.MultipartFile.fromBytes("imageFile",bytes, filename: fileName);
     request.files.add(httpImage);
 
+    print(prefs.getString("token"));
+
     request.headers["Authorization"] = "Bearer ${prefs.getString("token")}";
     //todo, later change these from static to dynamic.
     request.fields["readingValue"] ="27";
-    request.fields["utilityAccountNumber"] =prefs.getString("utilityAccountNumber")!;
-
-   print( request.url);
+    //todo
+    request.fields["utilityAccountNumber"] =prefs.getString("utilityAccountNumber")!.isEmpty? "1" : prefs.getString("utilityAccountNumber")!;
 
     final response = await request.send();
 
     print(response.statusCode);
 
+    if(response.statusCode == 200){
 
-
-
-
-
-
-
-
-
-
+      return true;
+    }else{
+      return false;
+    }
 
   }
 }

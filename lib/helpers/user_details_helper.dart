@@ -18,7 +18,7 @@ class UserDetailsHelper{
 
 
     try {
-      final response = await http.post(
+      final response = await http.get(
         url,
         headers: {'Content-Type': 'application/json',
         'Authorization' : 'Bearer ${prefs.getString('token')}'
@@ -30,18 +30,19 @@ class UserDetailsHelper{
         final body = json.decode(response.body);
 
         // later store the data inside shared preferences.
-        
-        prefs.setString("id", body["id"]);
-        prefs.setString("firstName", body["firstName"]);
-        prefs.setString("lastName", body["lastName"]);
+
+        prefs.setString("userDetails", "valid");
+        prefs.setString("id", body["id"].toString());
+        prefs.setString("firstName", body["firstname"]);
+        prefs.setString("lastName", body["lastname"]);
         prefs.setString("email", body["email"]);
-        prefs.setString("utilityAccountNumber", body["currentUtilityAccountNumber"]);
+        prefs.setString("utilityAccountNumber", body["currentUtilityAccountNumber"] ?? "");
 
 
       } else {
         // Handle error response
         if (kDebugMode) {
-          print("Login error: ${response.body}");
+          print("User details fetch error: ${response.statusCode}");
         }
 
 

@@ -1,8 +1,10 @@
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:flutter/material.dart';
 
+import '../../helpers/SnackBarHelper.dart';
 import '../../helpers/auth_helpers.dart';
 import '../../helpers/autocomplete_helper.dart';
+import '../Navigation/Navigation.dart';
 import 'Signup.dart';
 
 class SignUpPhase2 extends StatefulWidget {
@@ -27,6 +29,7 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
 
   List<Map<String, String>> map = [];
   Map<String, String> temp = {};
+
   @override
   void dispose() {
     _addressController.dispose();
@@ -34,7 +37,8 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
   }
 
   Future<List<String>> addressStringChanged() async {
-    map = await AutoCompleteHelper.addressHelper(_addressController.text.trim());
+    map =
+        await AutoCompleteHelper.addressHelper(_addressController.text.trim());
 
     List<String> data = [];
     for (var d in map) {
@@ -45,8 +49,6 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
   }
 
   void populateData(String selected) {
-
-
     for (var d in map) {
       if (d["address"] == selected) {
         temp = d;
@@ -70,33 +72,35 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
     );
   }
 
-  void finishSignUp() async{
+  void finishSignUp() {
     /// after performing apicall
     /// if authenticated =>  widget.isAuthenticated(true);
     /// else  => widget.isAuthenticated(false) and show a snack bar with appropriate message
 
-
-    if(_addressController.text.isEmpty){
-      /// show error
-      ScaffoldMessenger.of(context).clearSnackBars();
-
-      /// showing snack bar
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Address field is required!."),
-          duration: Duration(seconds: 5),
-        ),
-      );
+    if (_addressController.text.isEmpty) {
+      SnackBarHelper.showMessage("Address field is required!.",context);
       return;
     }
 
     widget.map.addAll(temp);
 
-    bool status = await AuthHelper.signUpHelper(widget.map);
+    AuthHelper.signUpHelper(widget.map).then((status) => {
+          if (status){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Navigation()),
+              )
+          }else{
+            SnackBarHelper.showMessage("SignUp Failed", context)
+          }
 
+
+        });
 
     // update shared prefs
   }
+
+
 
   @override
   Widget build(BuildContext context) {

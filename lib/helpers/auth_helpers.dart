@@ -69,9 +69,7 @@ class AuthHelper{
     final prefs = await SharedPreferences.getInstance();
 
 
-    data.forEach((key, value) {
-      print("$key -> $value");
-    });
+      data["role"]="CUSTOMER";
 
 
 
@@ -81,6 +79,8 @@ class AuthHelper{
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
+
+      print(response.statusCode);
 
 
       if (response.statusCode == 200) {
@@ -99,7 +99,7 @@ class AuthHelper{
       } else {
         // Handle error response
         if (kDebugMode) {
-          print("Login error: ${response.body}");
+          print("Login error: ${response.reasonPhrase}");
         }
         await prefs.setBool('isAuthenticated', false);
         return false;

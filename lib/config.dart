@@ -10,7 +10,7 @@ class Config{
 
   static const String login="/$apiVersion/auth/authenticate";
   static const String register="/$apiVersion/auth/register";
-  static const String fetchUserDetails = "/$apiVersion/";
+  static const String fetchUserDetails = "/$apiVersion/user/details";
 
 
   static const String uploadMeterImage = "/api/meter-images/upload";

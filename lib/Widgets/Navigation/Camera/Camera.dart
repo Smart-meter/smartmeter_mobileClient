@@ -3,14 +3,17 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:smartmeter/helpers/SnackBarHelper.dart';
 import 'package:smartmeter/helpers/image_upload_helper.dart';
 import 'package:smartmeter/main.dart';
 
 import '../../TakePictureScreen.dart';
 
 class Camera extends StatefulWidget {
-  const Camera({super.key});
+   Camera({super.key, required this.changePage});
 
+
+  void Function (int page) changePage;
   @override
   State<StatefulWidget> createState() {
     return _CameraState();
@@ -65,8 +68,18 @@ class _CameraState extends State<Camera> {
                     style: ElevatedButton.styleFrom(backgroundColor: kColorScheme.error),
                     child: const Text("Clear"),
                   ),
-                  ElevatedButton(onPressed: () {
-                   ImageUploadHelper.uploadImage(selectedImage!);
+                  ElevatedButton(onPressed: () async {
+                   bool status = await ImageUploadHelper.uploadImage(selectedImage!);
+
+                   if(status){
+                     SnackBarHelper.showMessage("Meter Image Uploaded Sucessfully", context);
+
+                     widget.changePage(0);
+                   }else{
+                     SnackBarHelper.showMessage("Meter Image Upload Failed", context);
+                   }
+
+
                   }, child: const Text("Upload!"))
                 ],
               )

@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartmeter/Widgets/HomeScreen/HomeScreen.dart';
@@ -32,9 +33,20 @@ class _NavigationBarState extends State<Navigation> {
       // make an api call and update the prefs.
 
       await UserDetailsHelper.fetchUserDetails();
+    }else{
+      if (kDebugMode) {
+        print("User details present");
+      }
     }
 
 
+  }
+
+
+  void changePage(int page){
+    setState(() {
+      currentPage = page;
+    });
   }
 
 
@@ -88,7 +100,7 @@ class _NavigationBarState extends State<Navigation> {
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 16),
         child: currentPage == 0 ? const HomeScreen() : currentPage == 1
-            ? const Camera()
+            ?  Camera(changePage : changePage)
             : const Settings(),
       ),
       backgroundColor: Colors.black,
