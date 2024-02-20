@@ -3,27 +3,31 @@
 import 'package:flutter/material.dart';
 
 class Greet extends StatelessWidget{
-  const Greet({super.key});
+   Greet({super.key, required this.userName});
+
+  String userName;
 
 
 
 
   @override
   Widget build(BuildContext context) {
+    
+    userName = userName[0]+userName.substring(1).toLowerCase();
 
     DateTime now = DateTime.now();
-    print(now);
+
     Widget w;
     var hour = int.parse(now.hour.toString());
-    print(hour);
+
     if(hour>=5 && hour<=12){
-      w = const Text("Good Morning,\nChiruhas", style: TextStyle(color: Colors.blueAccent, fontSize: 32, fontWeight: FontWeight.w700));
+      w =  Text("Good Morning,\n$userName", style: TextStyle(color: Colors.blueAccent, fontSize: 32, fontWeight: FontWeight.w700));
     }
     else if(hour>=12 && hour<18){
-      w = const Text("Good Afternoon,\nChiruhas", style: TextStyle(color: Colors.blueAccent, fontSize: 32, fontWeight: FontWeight.w700));
+      w =  Text("Good Afternoon,\n$userName", style: TextStyle(color: Colors.blueAccent, fontSize: 32, fontWeight: FontWeight.w700));
     }
     else{
-      w = const Text("Good Evening,\nChiruhas", style: TextStyle(color: Colors.blueAccent, fontSize: 32, fontWeight: FontWeight.w700));
+      w =  Text("Good Evening,\n$userName", style: TextStyle(color: Colors.blueAccent, fontSize: 32, fontWeight: FontWeight.w700));
     }
 
 

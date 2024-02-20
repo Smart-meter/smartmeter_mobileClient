@@ -24,23 +24,7 @@ class _NavigationBarState extends State<Navigation> {
 // here i make api call to fetch user details using the token
 // i only make this once, so i check before i make the call
 
-  void asyncStuff() async{
-    final prefs = await SharedPreferences.getInstance();
 
-    // userDetails is the prefs key i choosed
-
-    if(!prefs.containsKey("userDetails")){
-      // make an api call and update the prefs.
-
-      await UserDetailsHelper.fetchUserDetails();
-    }else{
-      if (kDebugMode) {
-        print("User details present");
-      }
-    }
-
-
-  }
 
 
   void changePage(int page){
@@ -49,11 +33,6 @@ class _NavigationBarState extends State<Navigation> {
     });
   }
 
-
-  @override
-  void initState() {
-    asyncStuff();
-  }
 
   @override
   Widget build(BuildContext context) {
