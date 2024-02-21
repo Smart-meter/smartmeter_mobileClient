@@ -80,7 +80,6 @@ class AuthHelper{
         body: jsonEncode(data),
       );
 
-      print(response.statusCode);
 
 
       if (response.statusCode == 200) {

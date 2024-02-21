@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,14 +14,30 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  late SharedPreferences preferences;
+  String userName="Chiruhas Bobbadi";
   void _clearData() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+
     await preferences.clear();
   }
 
-  /**
-   *
-   */
+  void asyncDataFetch() async{
+     preferences = await SharedPreferences.getInstance();
+
+     setState(() {
+       userName = "${preferences.getString("firstName")} ${preferences.getString("lastName")}";
+     });
+
+     print(userName);
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    asyncDataFetch();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +48,14 @@ class _SettingsState extends State<Settings> {
           CircleAvatar(
             radius: 64,
             backgroundColor: Colors.brown.shade800,
-            child: const Text('CB', style: TextStyle(color: Colors.white, fontSize: 32),),
+            child:  Text("${userName.split(" ")[0][0]}${userName.split(" ")[1][0]}", style: const TextStyle(color: Colors.white, fontSize: 32),),
           ),
           const SizedBox(
             height: 8,
           ),
-          const Text(
-            "Chiruhas Bobbadi",
-            style: TextStyle(
+           Text(
+            userName,
+            style: const TextStyle(
                 color: Colors.blueAccent,
                 fontSize: 32,
                 fontWeight: FontWeight.w700),

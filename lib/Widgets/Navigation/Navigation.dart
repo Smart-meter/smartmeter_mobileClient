@@ -21,12 +21,6 @@ class Navigation extends StatefulWidget {
 class _NavigationBarState extends State<Navigation> {
   int currentPage = 0;
 
-// here i make api call to fetch user details using the token
-// i only make this once, so i check before i make the call
-
-
-
-
   void changePage(int page){
     setState(() {
       currentPage = page;

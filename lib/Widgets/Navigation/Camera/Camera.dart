@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartmeter/helpers/SnackBarHelper.dart';
 import 'package:smartmeter/helpers/image_upload_helper.dart';
 import 'package:smartmeter/main.dart';
@@ -39,6 +40,12 @@ class _CameraState extends State<Camera> {
     init();
   }
 
+  void deleteUserData()async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    preferences.remove("userDetails");
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -73,7 +80,7 @@ class _CameraState extends State<Camera> {
 
                    if(status){
                      SnackBarHelper.showMessage("Meter Image Uploaded Sucessfully", context);
-
+                     deleteUserData();
                      widget.changePage(0);
                    }else{
                      SnackBarHelper.showMessage("Meter Image Upload Failed", context);

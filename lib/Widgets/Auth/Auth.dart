@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartmeter/Widgets/Auth/Login.dart';
+import 'package:smartmeter/helpers/SharedPrefHelper.dart';
 
 import '../Navigation/Navigation.dart';
 
 class Auth extends StatefulWidget {
    Auth({super.key});
-
-
 
   bool authStatus = false;
 
@@ -19,9 +18,6 @@ class Auth extends StatefulWidget {
 }
 
 class _AuthState extends State<Auth> {
-
-  //todo
-  /// this value must be precomputed depending on the user auth status
 
 
   bool _isAuthenticated =false;
@@ -40,14 +36,13 @@ class _AuthState extends State<Auth> {
   }
 
   void asyncStuff() async{
-    final prefs = await SharedPreferences.getInstance();
+
+   SharedPreferences prefs = await SharedPrefsHelper.getPrefs();
 
     setState(() {
-      _isAuthenticated = prefs.getBool('isAuthenticated') ?? false;
+      _isAuthenticated = prefs.getBool("isAuthenticated") ?? false;
     });
 
-
-    print(_isAuthenticated);
   }
 
   @override

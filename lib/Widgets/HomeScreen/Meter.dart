@@ -3,13 +3,15 @@
 import 'package:flutter/material.dart';
 
 class Meter extends StatelessWidget {
-  const Meter({super.key});
+   Meter({super.key, required this.meterReading});
+
+  String meterReading;
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Padding(
-      padding: EdgeInsets.all(16),
-      child: Text("000000000", style: TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.bold),),
+    return  Center(child: Padding(
+      padding: const EdgeInsets.all(8),
+      child: Text(meterReading, style: const TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.bold),),
     ));
   }
 }
