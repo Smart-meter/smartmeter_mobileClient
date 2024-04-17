@@ -1,5 +1,6 @@
 
 
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -63,11 +64,7 @@ class UserDetailsHelper{
 
   static Future<List<String>> fetchUserMessages() async{
     final url = Uri.http(Config.apiUrl, Config.fetchUserMessages);
-
-
     final prefs = await SharedPreferences.getInstance();
-
-
     try {
       final response = await http.get(
         url,
@@ -75,7 +72,6 @@ class UserDetailsHelper{
           'Authorization' : 'Bearer ${prefs.getString('token')}'
         },
       );
-
       if (response.statusCode == 200) {
 
         final body = json.decode(response.body);
@@ -87,12 +83,7 @@ class UserDetailsHelper{
         for(var d in body){
           data.add(d);
         }
-
-
         return data;
-
-
-
 
       } else {
         // Handle error response
@@ -100,17 +91,89 @@ class UserDetailsHelper{
           print("User details fetch error: ${response.statusCode}");
         }
 
-
       }
     } catch (e) {
       if (kDebugMode) {
         print("An error occurred: $e");
       }
-
-
     }
 
     List<String> l =[];
     return l;
+  }
+
+
+  static Future<bool> updateUserName(String userName) async{
+    final url = Uri.http(Config.apiUrl, Config.updateUserName);
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json',
+          'Authorization' : 'Bearer ${prefs.getString('token')}'
+        },
+        body:jsonEncode(userName)
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+  static Future<bool> updateEmail(String email) async{
+    final url = Uri.http(Config.apiUrl, Config.updateEmail);
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      final response = await http.post(
+          url,
+          headers: {'Content-Type': 'application/json',
+            'Authorization' : 'Bearer ${prefs.getString('token')}'
+          },
+          body:jsonEncode(email)
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+  static Future<bool> updatePassword(String password) async{
+    final url = Uri.http(Config.apiUrl, Config.updatePassword);
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      final response = await http.post(
+          url,
+          headers: {'Content-Type': 'application/json',
+            'Authorization' : 'Bearer ${prefs.getString('token')}'
+          },
+          body:jsonEncode(password)
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> updateAddress(Map<String, String> address) async{
+    final url = Uri.http(Config.apiUrl, Config.updateAddress);
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      final response = await http.post(
+          url,
+          headers: {'Content-Type': 'application/json',
+            'Authorization' : 'Bearer ${prefs.getString('token')}'
+          },
+          body:jsonEncode(address)
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
   }
 }

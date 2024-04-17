@@ -1,26 +1,22 @@
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:flutter/material.dart';
+import 'package:smartmeter/Widgets/Navigation/Settings/Settings.dart';
+import 'package:smartmeter/helpers/user_details_helper.dart';
 
-import '../../helpers/SnackBarHelper.dart';
-import '../../helpers/auth_helpers.dart';
-import '../../helpers/autocomplete_helper.dart';
-import '../Navigation/Navigation.dart';
-import 'Signup.dart';
+import '../../../../helpers/SnackBarHelper.dart';
+import '../../../../helpers/autocomplete_helper.dart';
 
-class SignUpPhase2 extends StatefulWidget {
-  SignUpPhase2({super.key, required this.map});
+class UtilityAccount extends StatefulWidget {
+  const UtilityAccount({super.key});
 
-  Map<String, String> map;
 
   @override
   State<StatefulWidget> createState() {
-    return _SignUpPhase2State();
+    return UtilityAccountState();
   }
-
-  void isAuthenticated(bool bool) {}
 }
 
-class _SignUpPhase2State extends State<SignUpPhase2> {
+class UtilityAccountState extends State<UtilityAccount> {
   final _addressController = TextEditingController();
   final _apartmentController = TextEditingController();
   final _zipCodeController = TextEditingController();
@@ -33,12 +29,16 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
   @override
   void dispose() {
     _addressController.dispose();
+    _apartmentController.dispose();
+    _zipCodeController.dispose();
+    _cityController.dispose();
+    _cityController.dispose();
     super.dispose();
   }
 
   Future<List<String>> addressStringChanged() async {
     map =
-        await AutoCompleteHelper.addressHelper(_addressController.text.trim());
+    await AutoCompleteHelper.addressHelper(_addressController.text.trim());
 
     List<String> data = [];
     for (var d in map) {
@@ -61,18 +61,8 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
     _stateController.text = temp["state"]!;
   }
 
-  void goBack() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => Signup(
-                map: widget.map,
-                showSignup: (bool status) {},
-              )),
-    );
-  }
 
-  void finishSignUp() {
+  void updateAddress() {
     /// after performing apicall
     /// if authenticated =>  widget.isAuthenticated(true);
     /// else  => widget.isAuthenticated(false) and show a snack bar with appropriate message
@@ -82,28 +72,37 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
       return;
     }
 
-    widget.map.addAll(temp);
 
-    AuthHelper.signUpHelper(widget.map).then((status) => {
-          if (status){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Navigation()),
-              )
-          }else{
-            SnackBarHelper.showMessage("SignUp Failed", context)
-          }
+    UserDetailsHelper.updateAddress(temp).then((status) => {
+      if (status){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Settings()),
+        )
+      }else{
+        SnackBarHelper.showMessage("Address Updation Failed", context)
+      }
 
 
-        });
+    });
 
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: const BackButton(
+          color: Colors.white, // Change the color here
+        ),
+        title: const Text(
+          'Utility Account Information',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.black,
+      ),
       backgroundColor: Colors.black,
       body: Container(
         margin: EdgeInsets.all(8),
@@ -114,20 +113,6 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
           children: [
             const SizedBox(
               height: 64,
-            ),
-            const Text(
-              "Address",
-              style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700),
-            ),
-            const Text(
-              "We use your address to link up utility accounts",
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
-            const SizedBox(
-              height: 20,
             ),
             Container(
                 // padding: const EdgeInsets.all(10),
@@ -232,35 +217,20 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
               height: 20,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    goBack();
+
                   },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.arrow_back),
+                      Text("Update Address"),
                       SizedBox(
                         width: 8,
                       ),
-                      Text("Back")
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    finishSignUp();
-                  },
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Complete Signup"),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Icon(Icons.task_alt),
+                      Icon(Icons.update),
                     ],
                   ),
                 ),

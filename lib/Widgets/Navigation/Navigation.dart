@@ -6,6 +6,7 @@ import 'package:smartmeter/Widgets/HomeScreen/HomeScreen.dart';
 import 'package:smartmeter/Widgets/Navigation/Settings/Settings.dart';
 import 'package:smartmeter/helpers/user_details_helper.dart';
 
+import '../ImageCropper/Cropper.dart';
 import 'Camera/Camera.dart';
 
 

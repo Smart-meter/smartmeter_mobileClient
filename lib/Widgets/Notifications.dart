@@ -1,4 +1,5 @@
 import 'package:card_slider/card_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class Notifications extends StatefulWidget {
@@ -13,18 +14,18 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationState extends State<Notifications> {
-
-
-
-
-  void dismiss(){
+  void dismiss() {
     print("hello");
-    setState(() {
-      // widget.messages.removeAt(index);
-    });
-
   }
 
+  void removeNotification(int index) {
+    if (kDebugMode) {
+      print('removign data');
+    }
+    setState(() {
+      widget.messages.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,26 +42,50 @@ class _NotificationState extends State<Notifications> {
     List<Widget> valuesWidget = [];
     for (int i = 0; i < widget.messages.length; i++) {
       valuesWidget.add(Container(
-          transform: Matrix4.translationValues(0.0, -66.0, 0.0),
-          padding: const EdgeInsets.all(8),
+          //transform: Matrix4.translationValues(0.0, -66.0, 0.0),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: valuesDataColors[i],
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text(
+              Flexible(flex:1,child: Text(
                 widget.messages[i],
-                style: const TextStyle(fontSize: 20, color: Colors.white),
-              ),
+                softWrap: true,
+                maxLines: 2,
+                style: const TextStyle(fontSize: 16, color: Colors.white),
+              ),),
               Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(onPressed: (){}, style: TextButton.styleFrom(foregroundColor: Colors.greenAccent),child: const Text("Take Action")),
-                  TextButton(onPressed: (){
-                    print("hello");
-                  }, style: TextButton.styleFrom(foregroundColor: Colors.red), child: const Text("Dismiss",),)
+                  ElevatedButton(
+                    style:ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
+                    onPressed: () {
+                      print("hello");
+                    },
+                    child: const Text('Enabled'),
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        print("decline");
+                      },
+                      style: TextButton.styleFrom(
+                          foregroundColor: Colors.greenAccent,
+                      fixedSize: Size.fromHeight(80)),
+                      child: const Text("Take Action")),
+                  TextButton(
+                    onPressed: () {
+                      print("dismiss");
+                    },
+                    style: TextButton.styleFrom(foregroundColor: Colors.red),
+                    child: const Text(
+                      "Dismiss",
+                    ),
+                  )
                 ],
               )
             ],
@@ -69,9 +94,11 @@ class _NotificationState extends State<Notifications> {
 
     return CardSlider(
       cards: valuesWidget,
-      bottomOffset: .0003,
-      cardHeight: 0.25,
-      itemDotOffset: -0.7,
+      bottomOffset: .0005,
+      cardHeight: 0.75,
+      itemDotOffset: 0.25,
     );
+
+
   }
 }
