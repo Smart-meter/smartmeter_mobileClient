@@ -70,8 +70,8 @@ class _SignupState extends State<Signup> {
 
       Map<String, String> map = {};
 
-      map["firstName"] = _firstNameController.text.trim();
-      map["lastName"] = _lastNameController.text.trim();
+      map["firstname"] = _firstNameController.text.trim();
+      map["lastname"] = _lastNameController.text.trim();
       map["password"] = _passwordController.text.trim();
       map["email"] = _emailController.text.trim();
 

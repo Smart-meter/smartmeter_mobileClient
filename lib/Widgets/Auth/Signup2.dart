@@ -1,5 +1,6 @@
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 
 import '../../helpers/SnackBarHelper.dart';
 import '../../helpers/auth_helpers.dart';
@@ -59,6 +60,9 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
     _cityController.text = temp["city"]!;
     _zipCodeController.text = temp["zipCode"]!;
     _stateController.text = temp["state"]!;
+    temp['country']="USA";
+    temp['street'] = _addressController.text;
+
   }
 
   void goBack() {
@@ -72,30 +76,85 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
     );
   }
 
-  void finishSignUp() {
+  void finishSignUp(BuildContext context) async{
     /// after performing apicall
     /// if authenticated =>  widget.isAuthenticated(true);
     /// else  => widget.isAuthenticated(false) and show a snack bar with appropriate message
 
+    temp['aptSuite']=_apartmentController.text;
     if (_addressController.text.isEmpty) {
       SnackBarHelper.showMessage("Address field is required!.",context);
+
       return;
     }
 
-    widget.map.addAll(temp);
-
-    AuthHelper.signUpHelper(widget.map).then((status) => {
-          if (status){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Navigation()),
-              )
-          }else{
-            SnackBarHelper.showMessage("SignUp Failed", context)
-          }
 
 
-        });
+    //make an api call to address service and fetch the details of UAN
+
+    int val =  await AuthHelper.fetchUAN(temp);
+
+    if(val==-1){
+      // not available popup
+
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: Text("Current Location doesn't have our service"),
+          content:
+          Text("Your current location cannot be serviced at this time."),
+          actions: <Widget>[
+            BasicDialogAction(
+              title: Text("OK"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+
+    }else{
+      temp['utilityAccountNumber'] = val.toString();
+      // confirmation Popup
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: Text("Do you want to proceed?"),
+          content: Text("Current location is mapped to the Utility Account ${val}, as per our records."),
+          actions: <Widget>[
+            BasicDialogAction(
+              title: Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            BasicDialogAction(
+              title: Text("Confirm"),
+              onPressed: () async{
+                widget.map.addAll(temp);
+
+                bool status = await AuthHelper.signUpHelper(widget.map);
+
+                if (status){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Navigation()),
+                  );
+                }else{
+                  SnackBarHelper.showMessage("SignUp Failed", context);
+                }
+
+              },
+            ),
+          ],
+        ),
+      );
+
+
+    }
+
 
   }
 
@@ -134,7 +193,7 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
                 alignment: Alignment.center,
                 child: EasyAutocomplete(
                     asyncSuggestions: (value) => addressStringChanged(),
-                    debounceDuration: const Duration(seconds: 1),
+                    debounceDuration: const Duration(milliseconds: 100),
                     progressIndicatorBuilder: const CircularProgressIndicator(
                       color: Colors.blueAccent,
                     ),
@@ -251,7 +310,7 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    finishSignUp();
+                    finishSignUp(context);
                   },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,

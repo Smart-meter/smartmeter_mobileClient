@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartmeter/Widgets/HomeScreen/HomeScreen.dart';
+import 'package:smartmeter/Widgets/Navigation/History/History.dart';
 import 'package:smartmeter/Widgets/Navigation/Settings/Settings.dart';
 import 'package:smartmeter/helpers/user_details_helper.dart';
 
@@ -23,6 +24,8 @@ class _NavigationBarState extends State<Navigation> {
   int currentPage = 0;
 
   void changePage(int page){
+
+    print(page);
     setState(() {
       currentPage = page;
     });
@@ -57,10 +60,10 @@ class _NavigationBarState extends State<Navigation> {
           ),
           NavigationDestination(
             icon: Icon(
-              Icons.camera_alt,
+              Icons.history,
               color: Colors.white,
             ),
-            label: 'Camera',
+            label: 'History',
           ),
           NavigationDestination(
             icon: Icon(
@@ -73,8 +76,8 @@ class _NavigationBarState extends State<Navigation> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 16),
-        child: currentPage == 0 ? const HomeScreen() : currentPage == 1
-            ?  Camera(changePage : changePage)
+        child: currentPage == 0 ? HomeScreen() : currentPage == 1
+            ?  History()
             : const Settings(),
       ),
       backgroundColor: Colors.black,

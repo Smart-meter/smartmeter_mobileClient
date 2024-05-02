@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:smartmeter/Widgets/Auth/Signup.dart';
 import 'package:smartmeter/helpers/auth_helpers.dart';
 
@@ -53,6 +54,27 @@ class _LoginState extends State<Login> {
 
     bool val = await AuthHelper.loginHelper(
         _emailController.text.trim(), _passwordController.text.trim());
+
+
+    if(!val){
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: Text("Authentication Failed"),
+          content: Text("Your email and password didn't match"),
+          actions: <Widget>[
+            BasicDialogAction(
+              title: Text("Try Again"),
+              onPressed: () {
+                _passwordController.clear();
+               // _emailController.clear();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    }
 
     widget.isAuthenticated(val);
   }

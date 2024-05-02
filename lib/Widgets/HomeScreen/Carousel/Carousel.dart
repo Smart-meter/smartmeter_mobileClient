@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:smartmeter/Widgets/HomeScreen/Carousel/CarouselCard.dart';
-import 'package:smartmeter/Widgets/ImageCropper/Cropper.dart';
+
+import '../../../model/Message.dart';
 
 class Carousel extends StatefulWidget {
-  Carousel({Key? key, required this.messages}) : super(key: key);
+  Carousel({Key? key, required this.messages, required this.deleteMessage})
+      : super(key: key);
 
-  //todo later change this into "Actions" type.
-  List<String> messages;
+  List<Message> messages;
+
+  Function(int index) deleteMessage;
 
   @override
   State<Carousel> createState() => _CarouselState();
@@ -26,23 +29,19 @@ class _CarouselState extends State<Carousel> {
     );
   }
 
-  List<Widget> l=[];
 
-
-
-
-
-  @override
-  void initState() {
-    for(int i=0;i<widget.messages.length;i++){
-      l.add(myCircle(i));
-
-      l.add(const SizedBox(width: 5,));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> l = [];
+    for (int i = 0; i < widget.messages.length; i++) {
+      l.add(myCircle(i));
+
+      l.add(const SizedBox(
+        width: 5,
+      ));
+    }
+
     return SizedBox(
       height: 275,
       child: Column(
@@ -59,7 +58,12 @@ class _CarouselState extends State<Carousel> {
               },
               itemBuilder: (BuildContext context, int index) {
                 if (index < widget.messages.length) {
-                  return CarouselCard(colors[index], widget.messages[index]);
+                  return CarouselCard(
+                    colors[index],
+                    widget.messages[index],
+                    deleteMessage: widget.deleteMessage,
+                    index: index,
+                  );
                 }
               },
             ),

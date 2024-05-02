@@ -1,156 +1,179 @@
-
-
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smartmeter/model/CallToActions.dart';
+import 'package:smartmeter/model/Message.dart';
 
 import '../config.dart';
-import 'package:http/http.dart' as http;
 
-class UserDetailsHelper{
-  static Future<void> fetchUserDetails()async {
-
+class UserDetailsHelper {
+  static Future<void> fetchUserDetails() async {
     final url = Uri.http(Config.apiUrl, Config.fetchUserDetails);
 
-
     final prefs = await SharedPreferences.getInstance();
-
 
     try {
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json',
-        'Authorization' : 'Bearer ${prefs.getString('token')}'
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${prefs.getString('token')}'
         },
       );
 
+      print(prefs.getString('token'));
 
       if (response.statusCode == 200) {
-
         final body = json.decode(response.body);
 
         // later store the data inside shared preferences.
-
+        print("user details set");
         prefs.setString("userDetails", "valid");
         prefs.setString("id", "${body["id"]}");
         prefs.setString("firstName", body["firstname"]);
         prefs.setString("lastName", body["lastname"]);
         prefs.setString("email", body["email"]);
-        prefs.setString("utilityAccountNumber", "${body["currentUtilityAccountNumber"]}" ?? "4");
+        prefs.setString("utilityAccountNumber", "${body["currentUtilityAccountNumber"]}");
         prefs.setString("readingValue", '${body["readingValue"]}');
         prefs.setString("dateOfReading", body["dateOfReading"]);
-
-
+        prefs.setString("dateOfLink", body["dateOfLink"]);
       } else {
         // Handle error response
         if (kDebugMode) {
           print("User details fetch error: ${response.statusCode}");
         }
-
-
       }
     } catch (e) {
       if (kDebugMode) {
         print("An error occurred: $e");
       }
-
-
     }
-
   }
 
 
-  static Future<List<String>> fetchUserMessages() async{
-    final url = Uri.http(Config.apiUrl, Config.fetchUserMessages);
+  static Future<void> fetchRecentReading() async {
     final prefs = await SharedPreferences.getInstance();
+    String? uan = prefs.getString("utilityAccountNumber");
+    final url = Uri.http(Config.meterApiUrl, "${Config.fetchRecentReading}$uan");
+
     try {
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json',
-          'Authorization' : 'Bearer ${prefs.getString('token')}'
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${prefs.getString('token')}'
         },
       );
-      if (response.statusCode == 200) {
 
+      if (response.statusCode == 200) {
         final body = json.decode(response.body);
 
         // later store the data inside shared preferences.
 
-        List<String> data =[];
-
-        for(var d in body){
-          data.add(d);
+        if(body['readingValue']!=null) {
+          prefs.setString("readingValue", body['readingValue']);
         }
-        return data;
-
+        prefs.setString("dateOfReading", body["dateOfReading"]);
+        prefs.setString("imageURL", body["imageURL"]);
+        prefs.setString("submissionId", body["readingId"].toString());
       } else {
         // Handle error response
         if (kDebugMode) {
-          print("User details fetch error: ${response.statusCode}");
+          print("fetchRecentReading : ${response.statusCode}");
         }
-
       }
     } catch (e) {
       if (kDebugMode) {
-        print("An error occurred: $e");
+        print("An error occurred, hello: $e");
       }
     }
-
-    List<String> l =[];
-    return l;
   }
 
+  static Future<List<Message>> fetchUserMessages() async {
+    final url = Uri.http(Config.apiUrl, Config.fetchUserMessages);
+    final prefs = await SharedPreferences.getInstance();
+    try{
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${prefs.getString('token')}'
+        },
+      );
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
 
-  static Future<bool> updateUserName(String userName) async{
+        // later store the data inside shared preferences.
+        List<Message> data = [];
+
+        for (var d in body) {
+          data.add(Message(d['message'], CallToActions.values.asNameMap()[d['action']]!));
+        }
+        return data;
+      }
+    }catch(e){
+      if (kDebugMode) {
+        print("fetchUserMessages: $e");
+      }
+
+
+    }
+
+    List<Message> m = [];
+
+    return m;
+
+  }
+
+  static Future<bool> updateFLName(String fName, String lName) async {
     final url = Uri.http(Config.apiUrl, Config.updateUserName);
     final prefs = await SharedPreferences.getInstance();
 
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json',
-          'Authorization' : 'Bearer ${prefs.getString('token')}'
-        },
-        body:jsonEncode(userName)
-      );
-
-      return response.statusCode == 200;
-    } catch (e) {
-      return false;
-    }
-  }
-  static Future<bool> updateEmail(String email) async{
-    final url = Uri.http(Config.apiUrl, Config.updateEmail);
-    final prefs = await SharedPreferences.getInstance();
+    var map = {};
+    map['firstname'] = fName;
+    map['lastname'] = lName;
 
     try {
-      final response = await http.post(
-          url,
-          headers: {'Content-Type': 'application/json',
-            'Authorization' : 'Bearer ${prefs.getString('token')}'
+      final response = await http.put(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${prefs.getString('token')}'
           },
-          body:jsonEncode(email)
-      );
+          body: jsonEncode(map));
 
-      return response.statusCode == 200;
+      if(response.statusCode == 200){
+
+        prefs.setString("firstName", fName);
+        prefs.setString("lastName", lName);
+        return true;
+
+      }
+
+
+      return false;
     } catch (e) {
       return false;
     }
   }
-  static Future<bool> updatePassword(String password) async{
+
+
+  static Future<bool> updatePassword(String password) async {
     final url = Uri.http(Config.apiUrl, Config.updatePassword);
     final prefs = await SharedPreferences.getInstance();
 
+    var map= {};
+    map['password'] = password;
+
     try {
-      final response = await http.post(
-          url,
-          headers: {'Content-Type': 'application/json',
-            'Authorization' : 'Bearer ${prefs.getString('token')}'
+      final response = await http.put(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${prefs.getString('token')}'
           },
-          body:jsonEncode(password)
-      );
+          body: jsonEncode(map));
+
 
       return response.statusCode == 200;
     } catch (e) {
@@ -158,18 +181,17 @@ class UserDetailsHelper{
     }
   }
 
-  static Future<bool> updateAddress(Map<String, String> address) async{
+  static Future<bool> updateAddress(Map<String, String> address) async {
     final url = Uri.http(Config.apiUrl, Config.updateAddress);
     final prefs = await SharedPreferences.getInstance();
 
     try {
-      final response = await http.post(
-          url,
-          headers: {'Content-Type': 'application/json',
-            'Authorization' : 'Bearer ${prefs.getString('token')}'
+      final response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${prefs.getString('token')}'
           },
-          body:jsonEncode(address)
-      );
+          body: jsonEncode(address));
 
       return response.statusCode == 200;
     } catch (e) {

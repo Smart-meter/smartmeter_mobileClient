@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../helpers/SharedPrefHelper.dart';
+import '../../../../helpers/SnackBarHelper.dart';
 import '../../../../helpers/user_details_helper.dart';
+import '../../../Auth/Auth.dart';
 
 class ProfileInfo extends StatefulWidget {
   const ProfileInfo({super.key});
@@ -16,14 +20,29 @@ class ProfileInfoState extends State<ProfileInfo> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _rePasswordController = TextEditingController();
-  final _userNameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _userNameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     super.dispose();
+  }
+
+  void asyncStuff() async {
+    SharedPreferences prefs = await SharedPrefsHelper.getPrefs();
+    _firstNameController.text = prefs.getString("firstName")!;
+    _lastNameController.text = prefs.getString("lastName")!;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    asyncStuff();
+    Future.delayed(Duration.zero).then((_) {});
   }
 
   Future<void> _userNameDialogBuilder(BuildContext context) {
@@ -32,14 +51,33 @@ class ProfileInfoState extends State<ProfileInfo> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Change User Name'),
-          content: TextField(
-            keyboardType: TextInputType.text,
-            style: const TextStyle(color: Colors.black),
-            controller: _userNameController,
-            decoration: InputDecoration(
-                labelText: 'User Name',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(8))),
+          content: SizedBox(
+            height: 160,
+            child: Column(
+              children: [
+                TextField(
+                  keyboardType: TextInputType.text,
+                  style: const TextStyle(color: Colors.black),
+                  controller: _firstNameController,
+                  decoration: InputDecoration(
+                      labelText: 'First Name',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8))),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  style: const TextStyle(color: Colors.black),
+                  controller: _lastNameController,
+                  decoration: InputDecoration(
+                      labelText: 'Last Name',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8))),
+                ),
+              ],
+            ),
           ),
           actions: <Widget>[
             TextButton(
@@ -57,11 +95,21 @@ class ProfileInfoState extends State<ProfileInfo> {
               ),
               child: const Text('Proceed'),
               onPressed: () async {
-                if (_userNameController.text.trim().isNotEmpty) {
+                if (_firstNameController.text.trim().isNotEmpty &&
+                    _lastNameController.text.trim().isNotEmpty) {
                   // api call
-                  await UserDetailsHelper.updateUserName(
-                      _userNameController.text.trim());
-                  Navigator.of(context).pop();
+                  String a = _firstNameController.text;
+                  String b = _lastNameController.text;
+                  bool response = await UserDetailsHelper.updateFLName(a, b);
+
+                  if (response) {
+                    SnackBarHelper.showMessage("Successfully Updated!", context);
+                    Navigator.of(context).pop();
+                  } else {
+                    SnackBarHelper.showMessage("Request Failed", context);
+                  }
+                } else {
+                  SnackBarHelper.showMessage("Fields Can't be empty", context);
                 }
               },
             ),
@@ -71,50 +119,7 @@ class ProfileInfoState extends State<ProfileInfo> {
     );
   }
 
-  Future<void> _emailDialogBuilder(BuildContext context) {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Change Email'),
-          content: TextField(
-            keyboardType: TextInputType.emailAddress,
-            style: const TextStyle(color: Colors.black),
-            controller: _emailController,
-            decoration: InputDecoration(
-                labelText: 'Email',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(8))),
-          ),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Proceed'),
-              onPressed: () async {
-                if (_emailController.text.trim().isNotEmpty) {
-                  // api call
-                  await UserDetailsHelper.updateEmail(
-                      _emailController.text.trim());
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
   Future<void> _passwordDialogBuilder(BuildContext context) {
     return showDialog<void>(
@@ -135,7 +140,9 @@ class ProfileInfoState extends State<ProfileInfo> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8))),
                 ),
-                SizedBox(height: 16,),
+                SizedBox(
+                  height: 16,
+                ),
                 TextField(
                   keyboardType: TextInputType.visiblePassword,
                   style: const TextStyle(color: Colors.black),
@@ -169,10 +176,27 @@ class ProfileInfoState extends State<ProfileInfo> {
                   if (_passwordController.text.trim() ==
                       _rePasswordController.text.trim()) {
                     // api call
-                    await UserDetailsHelper.updatePassword(
+                    bool response = await UserDetailsHelper.updatePassword(
                         _passwordController.text.trim());
-                    Navigator.of(context).pop();
+
+                    if (response) {
+                      SnackBarHelper.showMessage(
+                          "Successfully Updated!", context);
+                      // clear shared prefs and logout.
+
+                      SharedPreferences prefs =
+                          await SharedPrefsHelper.getPrefs();
+                      prefs.clear();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Auth()),
+                      );
+                    } else {
+                      SnackBarHelper.showMessage("Request Failed", context);
+                    }
                   }
+                } else {
+                  SnackBarHelper.showMessage("Fields Can't be empty", context);
                 }
               },
             ),
@@ -239,9 +263,46 @@ class ProfileInfoState extends State<ProfileInfo> {
             const SizedBox(
               height: 16,
             ),
+            // InkWell(
+            //   onTap: () {
+            //     _emailDialogBuilder(context);
+            //   },
+            //   child: Container(
+            //     padding: const EdgeInsets.all(8),
+            //     decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(16),
+            //         border: Border.all(
+            //           width: 3,
+            //           color: Colors.grey,
+            //           style: BorderStyle.solid,
+            //         )),
+            //     height: 48,
+            //     child: const Row(
+            //       mainAxisAlignment: MainAxisAlignment.start,
+            //       children: [
+            //         Icon(
+            //           Icons.email,
+            //           color: Colors.grey,
+            //         ),
+            //         SizedBox(
+            //           width: 8,
+            //         ),
+            //         Text(
+            //           "Email Address",
+            //           style: TextStyle(fontSize: 16, color: Colors.grey),
+            //         ),
+            //         Spacer(flex: 1),
+            //         Icon(Icons.arrow_right_alt_rounded, color: Colors.grey)
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 16,
+            // ),
             InkWell(
               onTap: () {
-                _emailDialogBuilder(context);
+                _passwordDialogBuilder(context);
               },
               child: Container(
                 padding: const EdgeInsets.all(8),
@@ -257,14 +318,14 @@ class ProfileInfoState extends State<ProfileInfo> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Icon(
-                      Icons.email,
+                      Icons.password,
                       color: Colors.grey,
                     ),
                     SizedBox(
                       width: 8,
                     ),
                     Text(
-                      "Email Address",
+                      "Password",
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     Spacer(flex: 1),
@@ -272,43 +333,6 @@ class ProfileInfoState extends State<ProfileInfo> {
                   ],
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            InkWell(
-              onTap: (){
-                _passwordDialogBuilder(context);
-              },
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      width: 3,
-                      color: Colors.grey,
-                      style: BorderStyle.solid,
-                    )),
-                height: 48,
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.password,
-                        color: Colors.grey,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        "Password",
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                      Spacer(flex: 1),
-                      Icon(Icons.arrow_right_alt_rounded, color: Colors.grey)
-                    ],
-                  ),
-                ),
             ),
             const SizedBox(
               height: 16,

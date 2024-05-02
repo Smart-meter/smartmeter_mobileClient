@@ -37,8 +37,6 @@ class _SettingsState extends State<Settings> {
       userName =
           "${preferences.getString("firstName")} ${preferences.getString("lastName")}";
     });
-
-    print(userName);
   }
 
   void navigate(String dest) {
