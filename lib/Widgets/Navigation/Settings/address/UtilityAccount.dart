@@ -38,7 +38,7 @@ class UtilityAccountState extends State<UtilityAccount> {
     _apartmentController.dispose();
     _zipCodeController.dispose();
     _cityController.dispose();
-    _cityController.dispose();
+    _stateController.dispose();
     super.dispose();
   }
 
