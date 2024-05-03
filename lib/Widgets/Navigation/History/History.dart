@@ -35,8 +35,8 @@ class HistoryState extends State<History> {
   Widget build(BuildContext context) {
     List<Widget> w = [];
 
-   // var d1 = HistoryModel("1", "date", "status", "imageUrl", "-", "-");
-
+    // var d1 = HistoryModel("1", "date", "status", "imageUrl", "-", "-");
+    //
     // data.add(d1);
     // data.add(d1);
     // data.add(d1);
@@ -48,8 +48,28 @@ class HistoryState extends State<History> {
       w.add(HistoryItemCard(data: d));
     }
 
-    return Column(
+   return w.isEmpty? Column(
+     mainAxisAlignment: MainAxisAlignment.start,
+     crossAxisAlignment: CrossAxisAlignment.start,
+     mainAxisSize: MainAxisSize.max,
+      children: [
+        Container(
+        margin: EdgeInsets.all(8),
+        child: const Text("History",
+            style: TextStyle(
+              color: Colors.blueAccent,
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+            )),
 
+
+        ),
+        const SizedBox(height: 280,),
+        const Center(child: CircularProgressIndicator(),)
+      ],
+    )  : Column(
+
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -62,7 +82,7 @@ class HistoryState extends State<History> {
                 fontWeight: FontWeight.w700,
               )),
         ),
-        Expanded(flex: 1,child: ListView(children: w,),)
+         Expanded(flex: 1,child: ListView(children: w,),)
       ],
     );
   }

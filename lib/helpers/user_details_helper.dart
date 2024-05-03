@@ -73,11 +73,13 @@ class UserDetailsHelper {
         // later store the data inside shared preferences.
 
         if(body['readingValue']!=null) {
-          prefs.setString("readingValue", body['readingValue']);
+          prefs.setString("readingValue", body['readingValue'].toString());
         }
         prefs.setString("dateOfReading", body["dateOfReading"]);
         prefs.setString("imageURL", body["imageURL"]);
         prefs.setString("submissionId", body["readingId"].toString());
+        prefs.setString("billAmount", body["billAmount"]==null?"0":body["billAmount"].toString());
+        prefs.setString("status", body["status"]);
       } else {
         // Handle error response
         if (kDebugMode) {
@@ -181,19 +183,23 @@ class UserDetailsHelper {
     }
   }
 
-  static Future<bool> updateAddress(Map<String, String> address) async {
+  static Future<bool> updateAddress(Map<String, String> data) async {
     final url = Uri.http(Config.apiUrl, Config.updateAddress);
     final prefs = await SharedPreferences.getInstance();
 
+    print(data);
     try {
-      final response = await http.post(url,
+      final response = await http.put(url,
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ${prefs.getString('token')}'
           },
-          body: jsonEncode(address));
+          body: jsonEncode(data));
 
-      return response.statusCode == 200;
+      print( response.statusCode);
+
+
+      return response.statusCode == 204;
     } catch (e) {
       return false;
     }

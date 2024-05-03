@@ -44,13 +44,13 @@ class _HomeScreenState extends State<HomeScreen> {
     await UserDetailsHelper.fetchRecentReading();
 
     messages = await UserDetailsHelper.fetchUserMessages();
-    messages.add(Message(
-        "Please confirm your meter reading",
-        CallToActions.CONFIRM_AUTOMATED_METER_READING));
-
-    messages.add(Message(
-        "Your meter reading failed, please take action",
-        CallToActions.MANUAL_METER_READING));
+    // messages.add(Message(
+    //     "Please confirm your meter reading",
+    //     CallToActions.CONFIRM_AUTOMATED_METER_READING));
+    //
+    // messages.add(Message(
+    //     "Your meter reading failed, please take action",
+    //     CallToActions.MANUAL_METER_READING));
 
 
     setState(() {

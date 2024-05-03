@@ -2,10 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartmeter/Widgets/HomeScreen/HomeScreen.dart';
+import 'package:smartmeter/helpers/SharedPrefHelper.dart';
 import 'package:smartmeter/helpers/SnackBarHelper.dart';
 import 'package:smartmeter/helpers/image_upload_helper.dart';
 import 'package:smartmeter/main.dart';
+
+import '../Navigation.dart';
 
 class Camera extends StatefulWidget {
   const Camera({super.key});
@@ -57,8 +61,8 @@ class _CameraState extends State<Camera> {
   }
 
   void deleteUserData() async {
-    // SharedPreferences preferences = await SharedPreferences.getInstance();
-    // preferences.remove("userDetails");
+    SharedPreferences preferences = await SharedPrefsHelper.getPrefs();
+    preferences.remove("userDetails");
   }
 
   @override
@@ -113,12 +117,13 @@ class _CameraState extends State<Camera> {
                               SnackBarHelper.showMessage(
                                   "Meter Image Uploaded Sucessfully", context);
 
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(builder: (context) => const HomeScreen()),
-                              // );
+                              deleteUserData();
 
-                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Navigation()),
+                              );
                             } else {
                               SnackBarHelper.showMessage(
                                   "Meter Image Upload Failed", context);

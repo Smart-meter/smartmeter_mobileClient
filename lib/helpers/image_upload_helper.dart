@@ -97,30 +97,5 @@ class ImageUploadHelper {
   }
 
 
-  static Future<bool> invalidateImage() async {
-    final prefs = await SharedPreferences.getInstance();
 
-    String? id = prefs.getString("submissionId");
-
-    final url = Uri.http(Config.meterApiUrl, "${Config.invalidateImage}$id");
-
-
-    try {
-      final response = await http.put(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${prefs.getString('token')}'
-        },
-      );
-
-      return response.statusCode == 200;
-    } catch (e) {
-      if (kDebugMode) {
-        print("An error occurred, hello: $e");
-      }
-
-      return false;
-    }
-  }
 }

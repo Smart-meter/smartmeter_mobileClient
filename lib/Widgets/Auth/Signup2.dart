@@ -34,6 +34,10 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
   @override
   void dispose() {
     _addressController.dispose();
+    _apartmentController.dispose();
+    _zipCodeController.dispose();
+    _cityController.dispose();
+    _stateController.dispose();
     super.dispose();
   }
 

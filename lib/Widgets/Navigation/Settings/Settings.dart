@@ -24,7 +24,7 @@ class _SettingsState extends State<Settings> {
   late SharedPreferences preferences;
   String userName = "Chiruhas Bobbadi";
 
-  String imageUrl = "https://picsum.photos/250?image=9";
+  String imageUrl = "";
 
   void _clearData() async {
     await preferences.clear();
@@ -35,7 +35,8 @@ class _SettingsState extends State<Settings> {
 
     setState(() {
       userName =
-          "${preferences.getString("firstName")} ${preferences.getString("lastName")}";
+      "${preferences.getString("firstName")} ${preferences.getString(
+          "lastName")}";
     });
   }
 
@@ -51,7 +52,7 @@ class _SettingsState extends State<Settings> {
       case 'utilityAccount':
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => const UtilityAccount(),
+            builder: (context) =>  UtilityAccount(prefs : preferences),
           ),
         );
         break;
@@ -82,63 +83,72 @@ class _SettingsState extends State<Settings> {
 
       showPlatformDialog(
         context: context,
-        builder: (context) => BasicDialogAlert(
-          title: const Text("Confirm Image Selection"),
-          content: const Text(
-              "Are you sure you want to set this image as your profile picture"),
-          actions: <Widget>[
-            BasicDialogAction(
-              title: const Text("cancel"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            BasicDialogAction(
-              title: const Text("ok"),
-              onPressed: ()async {
-                bool status =
+        builder: (context) =>
+            BasicDialogAlert(
+              title: const Text("Confirm Image Selection"),
+              content: const Text(
+                  "Are you sure you want to set this image as your profile picture"),
+              actions: <Widget>[
+                BasicDialogAction(
+                  title: const Text("cancel"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                BasicDialogAction(
+                  title: const Text("ok"),
+                  onPressed: () async {
+                    bool status =
                     await ImageUploadHelper.uploadProfileImage(selectedImage!);
-                if (status) {
-                  SnackBarHelper.showMessage(
-                      "Profile Image Uploaded Sucessfully", context);
-                  Navigator.pop(context);
-                } else {
-                  SnackBarHelper.showMessage(
-                      "Profile Image Upload Failed", context);
-                }
-              },
+                    if (status) {
+                      SnackBarHelper.showMessage(
+                          "Profile Image Uploaded Sucessfully", context);
+                      Navigator.pop(context);
+                    } else {
+                      SnackBarHelper.showMessage(
+                          "Profile Image Upload Failed", context);
+                    }
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
       );
-
     }).onError((error, stackTrace) {});
-
-
-
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget w = imageUrl.isEmpty ? CircleAvatar(
+      radius: 64,
+      backgroundColor: Colors.brown.shade800,
+      child: Text(
+        imageUrl.isNotEmpty
+            ? ""
+            : "${userName.split(" ")[0][0]}${userName.split(" ")[1][0]}",
+        style: const TextStyle(color: Colors.white, fontSize: 32),
+      ),
+    ) : CircleAvatar(
+      radius: 64,
+      backgroundColor: Colors.brown.shade800,
+      backgroundImage: NetworkImage(imageUrl),
+      child: Text(
+        imageUrl.isNotEmpty
+            ? ""
+            : "${userName.split(" ")[0][0]}${userName.split(" ")[1][0]}",
+        style: const TextStyle(color: Colors.white, fontSize: 32),
+      ),
+    );
+
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           InkWell(
-            onTap: () {
-              setProfileImage(context);
-            },
-            child: CircleAvatar(
-              radius: 64,
-              backgroundColor: Colors.brown.shade800,
-              backgroundImage: NetworkImage(imageUrl),
-              child: Text(
-                imageUrl.isNotEmpty
-                    ? ""
-                    : "${userName.split(" ")[0][0]}${userName.split(" ")[1][0]}",
-                style: const TextStyle(color: Colors.white, fontSize: 32),
-              ),
-            ),
+              onTap: () {
+                setProfileImage(context);
+              },
+              child:w
           ),
           const SizedBox(
             height: 8,

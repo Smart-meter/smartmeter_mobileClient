@@ -14,11 +14,13 @@ class Config {
 
   static const String updateUserName = "/$apiVersion/user/update";
   static const String updatePassword = "/$apiVersion/user/update";
-  static const String updateAddress = "/$apiVersion/user/update/address";
+  static const String updateAddress = "/$apiVersion/user/updateAddress";
 
 
   static const String fetchRecentReading ="/$apiVersion/meter-reading/utility-account/latest/";
   static const String invalidateImage = "/$apiVersion/meter-reading/discard/";
+  static const String confirmImage="/$apiVersion/meter-reading/confirm/";
+  static const String payBill="/$apiVersion/meter-reading/billpay/";
   static const String history = "/$apiVersion/meter-reading/utility-account/";
 
   static const String uploadMeterImage = "/api/meter-images/upload";

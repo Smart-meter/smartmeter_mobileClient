@@ -1,14 +1,14 @@
 import 'package:crop_image/crop_image.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartmeter/model/BoundingBox.dart';
 
-import '../../helpers/SharedPrefHelper.dart';
 import '../../helpers/SnackBarHelper.dart';
 import '../../helpers/image_upload_helper.dart';
 
 class Cropper extends StatefulWidget {
-  const Cropper({super.key});
+  Cropper({super.key, required this.imageUrl});
+
+  String imageUrl;
 
   @override
   State<StatefulWidget> createState() {
@@ -18,8 +18,6 @@ class Cropper extends StatefulWidget {
 
 class CropperState extends State<Cropper> {
   late CropController controller;
-  String imageUrl =
-      "https://static.vecteezy.com/system/resources/previews/004/141/669/large_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg";
 
   final _valueController = TextEditingController();
 
@@ -102,23 +100,12 @@ class CropperState extends State<Cropper> {
       /// Specify in percentages (1 means full width and height). Defaults to the full image.
       defaultCrop: const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9),
     );
-
-    asyncStuff();
-    Future.delayed(Duration.zero).then((_) {});
   }
 
   @override
   void dispose() {
     _valueController.dispose();
     super.dispose();
-  }
-
-  void asyncStuff() async {
-    SharedPreferences prefs = await SharedPrefsHelper.getPrefs();
-
-    setState(() {
-      imageUrl = prefs.getString("imageURL")!;
-    });
   }
 
   @override
@@ -139,7 +126,8 @@ class CropperState extends State<Cropper> {
             ),
             backgroundColor: Colors.black,
             body: Container(
-              margin: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 56),
+              margin:
+                  const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -147,12 +135,12 @@ class CropperState extends State<Cropper> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                          margin: EdgeInsets.only(right: 8),
-                          child: Icon(
+                          margin: const EdgeInsets.only(right: 8),
+                          child: const Icon(
                             Icons.info,
                             color: Colors.white,
                           )),
-                      Expanded(
+                      const Expanded(
                           child: Text(
                               softWrap: true,
                               style: TextStyle(
@@ -163,13 +151,12 @@ class CropperState extends State<Cropper> {
                     ],
                   ),
                   const SizedBox(
-                    height: 24,
+                    height: 8,
                   ),
                   CropImage(
-                    controller: controller,
-                    onCrop: (rect) => {setValues(rect)},
-                    image: Image.network(imageUrl),
-                  ),
+                      controller: controller,
+                      onCrop: (rect) => {setValues(rect)},
+                      image: Image.network(widget.imageUrl)),
                   TextField(
                     keyboardType: TextInputType.number,
                     controller: _valueController,
@@ -180,21 +167,24 @@ class CropperState extends State<Cropper> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16))),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            controller.crop =
-                                const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
-                          },
-                          child: const Text("Reset")),
-                      ElevatedButton(
-                          onPressed: () {
-                            sendValues();
-                          },
-                          child: const Text("Complete"))
-                    ],
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              controller.crop =
+                                  const Rect.fromLTRB(0.1, 0.1, 0.9, 0.9);
+                            },
+                            child: const Text("Reset")),
+                        ElevatedButton(
+                            onPressed: () {
+                              sendValues();
+                            },
+                            child: const Text("Complete"))
+                      ],
+                    ),
                   )
                 ],
               ),

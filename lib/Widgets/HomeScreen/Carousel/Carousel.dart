@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartmeter/Widgets/HomeScreen/Carousel/CarouselCard.dart';
 
 import '../../../model/Message.dart';
@@ -18,6 +19,7 @@ class Carousel extends StatefulWidget {
 class _CarouselState extends State<Carousel> {
   List<Color> colors = [Colors.teal, Colors.blue, Colors.pink];
   int position = 0;
+
 
   Widget myCircle(int p) {
     return Container(

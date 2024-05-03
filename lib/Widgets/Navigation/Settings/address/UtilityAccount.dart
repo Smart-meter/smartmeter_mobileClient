@@ -1,14 +1,20 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:flutter/material.dart';
-import 'package:smartmeter/Widgets/Navigation/Settings/Settings.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartmeter/helpers/user_details_helper.dart';
 
 import '../../../../helpers/SnackBarHelper.dart';
+import '../../../../helpers/auth_helpers.dart';
 import '../../../../helpers/autocomplete_helper.dart';
+import '../../Navigation.dart';
 
 class UtilityAccount extends StatefulWidget {
-  const UtilityAccount({super.key});
+  UtilityAccount({super.key, required this.prefs});
 
+  SharedPreferences prefs;
 
   @override
   State<StatefulWidget> createState() {
@@ -38,7 +44,7 @@ class UtilityAccountState extends State<UtilityAccount> {
 
   Future<List<String>> addressStringChanged() async {
     map =
-    await AutoCompleteHelper.addressHelper(_addressController.text.trim());
+        await AutoCompleteHelper.addressHelper(_addressController.text.trim());
 
     List<String> data = [];
     for (var d in map) {
@@ -59,37 +65,116 @@ class UtilityAccountState extends State<UtilityAccount> {
     _cityController.text = temp["city"]!;
     _zipCodeController.text = temp["zipCode"]!;
     _stateController.text = temp["state"]!;
+    temp['country'] = "USA";
+    temp['street'] = _addressController.text;
   }
 
+  void showErrorDialog() {
 
-  void updateAddress() {
-    /// after performing apicall
-    /// if authenticated =>  widget.isAuthenticated(true);
-    /// else  => widget.isAuthenticated(false) and show a snack bar with appropriate message
+    String? status = widget.prefs.getString("status");
 
-    if (_addressController.text.isEmpty) {
-      SnackBarHelper.showMessage("Address field is required!.",context);
-      return;
+    if(status == "CONFIRMED"){
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: const Text("Bill Payment required"),
+          content: Text(
+              "You have a pending bill payment, please pay that to proceed with address change."),
+          actions: <Widget>[
+            BasicDialogAction(
+              title: Text("Okay"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Navigation()),
+                );
+              },
+            )
+          ],
+        ),
+      );
     }
 
 
-    UserDetailsHelper.updateAddress(temp).then((status) => {
-      if (status){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const Settings()),
-        )
-      }else{
-        SnackBarHelper.showMessage("Address Updation Failed", context)
-      }
+  }
 
+  void updateAddress() async {
+    temp['aptSuite'] = _apartmentController.text;
 
-    });
+    if (_addressController.text.isEmpty) {
+      SnackBarHelper.showMessage("Address field is required!.", context);
+      return;
+    }
 
+    //make an api call to address service and fetch the details of UAN
+
+    int val = await AuthHelper.fetchUAN(temp);
+
+    if (val == -1) {
+      // not available popup
+
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: Text("Current Location doesn't have our service"),
+          content:
+              Text("Your current location cannot be serviced at this time."),
+          actions: <Widget>[
+            BasicDialogAction(
+              title: Text("OK"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    } else {
+      temp['utilityAccountNumber'] = val.toString();
+      // confirmation Popup
+      showPlatformDialog(
+        context: context,
+        builder: (context) => BasicDialogAlert(
+          title: Text("Do you want to proceed?"),
+          content: Text(
+              "Current location is mapped to the Utility Account ${val}, as per our records."),
+          actions: <Widget>[
+            BasicDialogAction(
+              title: Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            BasicDialogAction(
+              title: Text("Confirm"),
+              onPressed: () async {
+                bool status = await UserDetailsHelper.updateAddress(temp);
+
+                if (status) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Navigation()),
+                  );
+                } else {
+                  SnackBarHelper.showMessage("Address Update Failed", context);
+                }
+              },
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Future<void> _runsAfterBuild() async {
+    await Future.delayed(Duration.zero); // <-- Add a 0 dummy waiting time
+   showErrorDialog();
   }
 
   @override
   Widget build(BuildContext context) {
+    _runsAfterBuild();
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(
@@ -221,7 +306,7 @@ class UtilityAccountState extends State<UtilityAccount> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-
+                    updateAddress();
                   },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,

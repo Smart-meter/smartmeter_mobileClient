@@ -35,6 +35,7 @@ class AuthHelper{
         // i also need to store the JWT token, and from later requests i need to include it
         await prefs.setString('token', body["access_token"]);
 
+        print("Bearer ${prefs.getString('token')}");
         return true;
       } else {
         // Handle error response

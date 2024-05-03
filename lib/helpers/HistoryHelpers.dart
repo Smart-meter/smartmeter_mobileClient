@@ -23,7 +23,7 @@ class HistoryHelper {
         },
       );
 
-      print(response.statusCode);
+
 
       if (response.statusCode == 200) {
         final body = json.decode(response.body);
@@ -31,16 +31,26 @@ class HistoryHelper {
         List<HistoryModel> data = [];
 
         for (var b in body) {
+
+          var st =  b["status"].split("_");
+          String s="";
+
+          for(var i in st){
+            s+=i.toLowerCase()+" ";
+          }
+
           var d = HistoryModel(
               b["readingId"].toString(),
               b["dateOfReading"],
-              b["status"],
+             s.trim(),
               b["imageURL"],
-              b["readingValue"] ?? "-",
-              b["billAmount"].toString());
+              b["readingValue"].toString() == "null" ? "-" :b["readingValue"].toString(),
+              b["billAmount"].toString() == "null" ? "-" : b["billAmount"].toString());
 
           data.add(d);
         }
+
+
 
         return data;
       } else {
@@ -48,6 +58,7 @@ class HistoryHelper {
         return data;
       }
     } catch (e) {
+      print(e);
       List<HistoryModel> data = [];
       return data;
     }
