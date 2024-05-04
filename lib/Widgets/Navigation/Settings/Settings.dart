@@ -35,8 +35,7 @@ class _SettingsState extends State<Settings> {
 
     setState(() {
       userName =
-      "${preferences.getString("firstName")} ${preferences.getString(
-          "lastName")}";
+          "${preferences.getString("firstName")} ${preferences.getString("lastName")}";
     });
   }
 
@@ -52,7 +51,7 @@ class _SettingsState extends State<Settings> {
       case 'utilityAccount':
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) =>  UtilityAccount(prefs : preferences),
+            builder: (context) => UtilityAccount(prefs: preferences),
           ),
         );
         break;
@@ -67,78 +66,74 @@ class _SettingsState extends State<Settings> {
   }
 
   void setProfileImage(BuildContext context) {
-
-
     /**
      *
      */
 
     File? selectedImage;
 
-    ImagePicker()
-        .pickImage(source: ImageSource.gallery)
-        .then((value) async {
+    ImagePicker().pickImage(source: ImageSource.gallery).then((value) async {
       selectedImage = File(value!.path);
       //apikall
 
       showPlatformDialog(
         context: context,
-        builder: (context) =>
-            BasicDialogAlert(
-              title: const Text("Confirm Image Selection"),
-              content: const Text(
-                  "Are you sure you want to set this image as your profile picture"),
-              actions: <Widget>[
-                BasicDialogAction(
-                  title: const Text("cancel"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                BasicDialogAction(
-                  title: const Text("ok"),
-                  onPressed: () async {
-                    bool status =
-                    await ImageUploadHelper.uploadProfileImage(selectedImage!);
-                    if (status) {
-                      SnackBarHelper.showMessage(
-                          "Profile Image Uploaded Sucessfully", context);
-                      Navigator.pop(context);
-                    } else {
-                      SnackBarHelper.showMessage(
-                          "Profile Image Upload Failed", context);
-                    }
-                  },
-                ),
-              ],
+        builder: (context) => BasicDialogAlert(
+          title: const Text("Confirm Image Selection"),
+          content: const Text(
+              "Are you sure you want to set this image as your profile picture"),
+          actions: <Widget>[
+            BasicDialogAction(
+              title: const Text("cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
+            BasicDialogAction(
+              title: const Text("ok"),
+              onPressed: () async {
+                bool status =
+                    await ImageUploadHelper.uploadProfileImage(selectedImage!);
+                if (status) {
+                  SnackBarHelper.showMessage(
+                      "Profile Image Uploaded Sucessfully", context);
+                  Navigator.pop(context);
+                } else {
+                  SnackBarHelper.showMessage(
+                      "Profile Image Upload Failed", context);
+                }
+              },
+            ),
+          ],
+        ),
       );
     }).onError((error, stackTrace) {});
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget w = imageUrl.isEmpty ? CircleAvatar(
-      radius: 64,
-      backgroundColor: Colors.brown.shade800,
-      child: Text(
-        imageUrl.isNotEmpty
-            ? ""
-            : "${userName.split(" ")[0][0]}${userName.split(" ")[1][0]}",
-        style: const TextStyle(color: Colors.white, fontSize: 32),
-      ),
-    ) : CircleAvatar(
-      radius: 64,
-      backgroundColor: Colors.brown.shade800,
-      backgroundImage: NetworkImage(imageUrl),
-      child: Text(
-        imageUrl.isNotEmpty
-            ? ""
-            : "${userName.split(" ")[0][0]}${userName.split(" ")[1][0]}",
-        style: const TextStyle(color: Colors.white, fontSize: 32),
-      ),
-    );
-
+    Widget w = imageUrl.isEmpty
+        ? CircleAvatar(
+            radius: 64,
+            backgroundColor: Colors.brown.shade800,
+            child: Text(
+              imageUrl.isNotEmpty
+                  ? ""
+                  : "${userName.split(" ")[0][0]}${userName.split(" ")[1][0]}",
+              style: const TextStyle(color: Colors.white, fontSize: 32),
+            ),
+          )
+        : CircleAvatar(
+            radius: 64,
+            backgroundColor: Colors.brown.shade800,
+            backgroundImage: NetworkImage(imageUrl),
+            child: Text(
+              imageUrl.isNotEmpty
+                  ? ""
+                  : "${userName.split(" ")[0][0]}${userName.split(" ")[1][0]}",
+              style: const TextStyle(color: Colors.white, fontSize: 32),
+            ),
+          );
 
     return Center(
       child: Column(
@@ -148,8 +143,7 @@ class _SettingsState extends State<Settings> {
               onTap: () {
                 setProfileImage(context);
               },
-              child:w
-          ),
+              child: w),
           const SizedBox(
             height: 8,
           ),

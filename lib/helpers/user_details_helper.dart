@@ -186,8 +186,6 @@ class UserDetailsHelper {
   static Future<bool> updateAddress(Map<String, String> data) async {
     final url = Uri.http(Config.apiUrl, Config.updateAddress);
     final prefs = await SharedPreferences.getInstance();
-
-    print(data);
     try {
       final response = await http.put(url,
           headers: {
@@ -196,10 +194,10 @@ class UserDetailsHelper {
           },
           body: jsonEncode(data));
 
-      print( response.statusCode);
+      print(response.statusCode);
 
 
-      return response.statusCode == 204;
+      return response.statusCode == 200;
     } catch (e) {
       return false;
     }

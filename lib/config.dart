@@ -1,10 +1,10 @@
 class Config {
-  static const String port = "8081";
-  static const String meterPort = "8082";
+  static const String port = "5000";
+  static const String meterPort = "5000";
   static const String utilityPort = "9001";
   static const String apiVersion = "api/v1";
-  static const String apiUrl = "localhost:$port";
-  static const String meterApiUrl = "localhost:$meterPort";
+  static const String apiUrl = "utilitycoreservices.us-east-1.elasticbeanstalk.com:$port";
+  static const String meterApiUrl = "utilitycoreservices.us-east-1.elasticbeanstalk.com:$meterPort";
   static const String utilityApiUrl="localhost:$utilityPort";
 
   static const String login = "/$apiVersion/auth/authenticate";

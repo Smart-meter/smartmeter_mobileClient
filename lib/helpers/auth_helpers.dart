@@ -29,6 +29,8 @@ class AuthHelper{
 
         final body = json.decode(response.body);
 
+        print("token -> ${body["access_token"]}");
+
 
          await prefs.setBool('isAuthenticated', true);
 
