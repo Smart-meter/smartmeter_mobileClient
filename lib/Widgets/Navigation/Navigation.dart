@@ -16,7 +16,6 @@ class _NavigationBarState extends State<Navigation> {
   int currentPage = 0;
 
   void changePage(int page) {
-    print(page);
     setState(() {
       currentPage = page;
     });

@@ -167,169 +167,172 @@ class _SignUpPhase2State extends State<SignUpPhase2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black,
-      body: Container(
-        margin: EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          // mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(
-              height: 64,
-            ),
-            const Text(
-              "Address",
-              style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700),
-            ),
-            const Text(
-              "We use your address to link up utility accounts",
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-                // padding: const EdgeInsets.all(10),
-                alignment: Alignment.center,
-                child: EasyAutocomplete(
-                    asyncSuggestions: (value) => addressStringChanged(),
-                    debounceDuration: const Duration(milliseconds: 100),
-                    progressIndicatorBuilder: const CircularProgressIndicator(
-                      color: Colors.blueAccent,
-                    ),
-                    controller: _addressController,
-                    cursorColor: Colors.blueAccent,
-                    onSubmitted: (String val) {
-                      populateData(val);
-                    },
-                    inputTextStyle: const TextStyle(color: Colors.white),
-                    suggestionBackgroundColor: Colors.black,
-                    decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.home),
-                        labelText: 'Address Line 1',
-                        hintText: 'enter your address',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16))),
-                    suggestionBuilder: (data) {
-                      return Column(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.all(4),
-                            child: Text(
-                              data,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 16),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            // mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(
+                height: 64,
+              ),
+              const Text(
+                "Address",
+                style: TextStyle(
+                    color: Colors.blueAccent,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w700),
+              ),
+              const Text(
+                "We use your address to link up utility accounts",
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                  // padding: const EdgeInsets.all(10),
+                  alignment: Alignment.center,
+                  child: EasyAutocomplete(
+                      asyncSuggestions: (value) => addressStringChanged(),
+                      debounceDuration: const Duration(milliseconds: 100),
+                      progressIndicatorBuilder: const CircularProgressIndicator(
+                        color: Colors.blueAccent,
+                      ),
+                      controller: _addressController,
+                      cursorColor: Colors.blueAccent,
+                      onSubmitted: (String val) {
+                        populateData(val);
+                      },
+                      inputTextStyle: const TextStyle(color: Colors.white),
+                      suggestionBackgroundColor: Colors.black,
+                      decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.home),
+                          labelText: 'Address Line 1',
+                          hintText: 'enter your address',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16))),
+                      suggestionBuilder: (data) {
+                        return Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.all(4),
+                              child: Text(
+                                data,
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                          const Divider()
-                        ],
-                      );
-                    })),
-            const SizedBox(
-              height: 20,
-            ),
-            TextField(
-              keyboardType: TextInputType.name,
-              controller: _apartmentController,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.tag),
-                  labelText: 'Apartment Number',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16))),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    keyboardType: TextInputType.name,
-                    style: const TextStyle(color: Colors.white),
-                    controller: _cityController,
-                    decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.location_city),
-                        labelText: 'City',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16))),
+                            const Divider()
+                          ],
+                        );
+                      })),
+              const SizedBox(
+                height: 20,
+              ),
+              TextField(
+                keyboardType: TextInputType.name,
+                controller: _apartmentController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.tag),
+                    labelText: 'Apartment Number',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16))),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.name,
+                      style: const TextStyle(color: Colors.white),
+                      controller: _cityController,
+                      decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.location_city),
+                          labelText: 'City',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16))),
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: TextField(
-                    keyboardType: TextInputType.name,
-                    style: const TextStyle(color: Colors.white),
-                    controller: _zipCodeController,
-                    decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.push_pin),
-                        labelText: 'Zip Code',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16))),
+                  const SizedBox(
+                    width: 8,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            TextField(
-              controller: _stateController,
-              keyboardType: TextInputType.name,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.map),
-                  labelText: 'State',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16))),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    goBack();
-                  },
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.arrow_back),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text("Back")
-                    ],
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.name,
+                      style: const TextStyle(color: Colors.white),
+                      controller: _zipCodeController,
+                      decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.push_pin),
+                          labelText: 'Zip Code',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16))),
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    finishSignUp(context);
-                  },
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Complete Signup"),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Icon(Icons.task_alt),
-                    ],
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              TextField(
+                controller: _stateController,
+                keyboardType: TextInputType.name,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.map),
+                    labelText: 'State',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16))),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      goBack();
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.arrow_back),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text("Back")
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  ElevatedButton(
+                    onPressed: () {
+                      finishSignUp(context);
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Complete Signup"),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Icon(Icons.task_alt),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

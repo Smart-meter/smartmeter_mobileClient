@@ -176,6 +176,7 @@ class UtilityAccountState extends State<UtilityAccount> {
   Widget build(BuildContext context) {
     _runsAfterBuild();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: const BackButton(
           color: Colors.white, // Change the color here

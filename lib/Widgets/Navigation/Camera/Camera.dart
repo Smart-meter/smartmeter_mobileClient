@@ -31,7 +31,7 @@ class _CameraState extends State<Camera> {
 
   void init() {
     /// make source : ImageSource.Camera => to access the camera.
-    ImagePicker().pickImage(source: ImageSource.gallery).then((value) {
+    ImagePicker().pickImage(source: ImageSource.camera).then((value) {
       setState(() {
         selectedImage = File(value!.path);
       });
@@ -43,7 +43,7 @@ class _CameraState extends State<Camera> {
   }
 
   void reInit() {
-    ImagePicker().pickImage(source: ImageSource.gallery).then((value) {
+    ImagePicker().pickImage(source: ImageSource.camera).then((value) {
       setState(() {
         selectedImage = File(value!.path);
       });

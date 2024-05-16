@@ -15,12 +15,14 @@ class History extends StatefulWidget {
 
 class HistoryState extends State<History> {
   List<HistoryModel> data = [];
+  bool call = false;
 
   void asyncStuff() async {
     List<HistoryModel> d = await HistoryHelper.fetchHistory();
 
     setState(() {
       data = d;
+      call = true;
     });
   }
 
@@ -34,14 +36,6 @@ class HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
     List<Widget> w = [];
-
-    // var d1 = HistoryModel("1", "date", "status", "imageUrl", "-", "-");
-    //
-    // data.add(d1);
-    // data.add(d1);
-    // data.add(d1);
-    // data.add(d1);
-    // data.add(d1);
 
     
     for (var d in data) {
@@ -65,7 +59,7 @@ class HistoryState extends State<History> {
 
         ),
         const SizedBox(height: 280,),
-        const Center(child: CircularProgressIndicator(),)
+        call ? const Center(child: Text("No History Data Found", style: TextStyle(color: Colors.grey, fontSize: 24),)):const Center(child: CircularProgressIndicator(),)
       ],
     )  : Column(
 
